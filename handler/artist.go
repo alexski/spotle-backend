@@ -37,12 +37,12 @@ func (a *App) GetArtist(w http.ResponseWriter, r *http.Request) {
 
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, "Invalid recipe ID")
+		respondWithError(w, http.StatusBadRequest, "Invalid artist ID")
 		return
 	}
 
-	recipe := model.Artist{ID: id}
-	if err := recipe.GetArtist(a.DB); err != nil {
+	artist := model.Artist{ID: id}
+	if err := artist.GetArtist(a.DB); err != nil {
 		switch err {
 		case sql.ErrNoRows:
 			respondWithError(w, http.StatusNotFound, "Artist not found")
@@ -52,25 +52,25 @@ func (a *App) GetArtist(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	respondWithJSON(w, http.StatusOK, recipe)
+	respondWithJSON(w, http.StatusOK, artist)
 }
 
 func (a *App) CreateArtist(w http.ResponseWriter, r *http.Request) {
-	var recipe model.Artist
+	var artist model.Artist
 
 	decoder := json.NewDecoder(r.Body)
-	if err := decoder.Decode(&recipe); err != nil {
+	if err := decoder.Decode(&artist); err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid request")
 		return
 	}
 	defer r.Body.Close()
 
-	if err := recipe.CreateArtist(a.DB); err != nil {
+	if err := artist.CreateArtist(a.DB); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	respondWithJSON(w, http.StatusCreated, recipe)
+	respondWithJSON(w, http.StatusCreated, artist)
 }
 
 func (a *App) UpdateArtist(w http.ResponseWriter, r *http.Request) {
@@ -80,21 +80,21 @@ func (a *App) UpdateArtist(w http.ResponseWriter, r *http.Request) {
 		respondWithError(w, http.StatusBadRequest, "Invalid request")
 	}
 
-	var recipe model.Artist
+	var artist model.Artist
 	decoder := json.NewDecoder(r.Body)
-	if err := decoder.Decode(&recipe); err != nil {
+	if err := decoder.Decode(&artist); err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid request")
 		return
 	}
 	defer r.Body.Close()
-	recipe.ID = id
+	artist.ID = id
 
-	if err := recipe.UpdateArtist(a.DB); err != nil {
+	if err := artist.UpdateArtist(a.DB); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	respondWithJSON(w, http.StatusOK, recipe)
+	respondWithJSON(w, http.StatusOK, artist)
 }
 
 func (a *App) DeleteArtist(w http.ResponseWriter, r *http.Request) {
@@ -104,8 +104,8 @@ func (a *App) DeleteArtist(w http.ResponseWriter, r *http.Request) {
 		respondWithError(w, http.StatusBadRequest, "Invalid request")
 	}
 
-	recipe := model.Artist{ID: id}
-	if err := recipe.DeleteArtist(a.DB); err != nil {
+	artist := model.Artist{ID: id}
+	if err := artist.DeleteArtist(a.DB); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}

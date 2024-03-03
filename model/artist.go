@@ -6,7 +6,7 @@ import (
 )
 
 type Artist struct {
-	ID               int       `json:"artist_id"`
+	ID               int       `json:"id"`
 	Name             string    `json:"artist_name"`
 	MonthlyListeners int32     `json:"monthly_listeners"`
 	LastChecked      time.Time `json:"last_checked"`
@@ -17,7 +17,7 @@ func (r *Artist) GetArtist(db *sql.DB) error {
 }
 
 func (r *Artist) UpdateArtist(db *sql.DB) error {
-	_, err := db.Exec("UPDATE recipes SET artist_name=$1, monthly_listeners=$2, last_checked=$3 WHERE id=$4", r.Name, r.MonthlyListeners, time.Now().UTC(), r.ID)
+	_, err := db.Exec("UPDATE artist SET artist_name=$1, monthly_listeners=$2, last_checked=$3 WHERE id=$4", r.Name, r.MonthlyListeners, time.Now().UTC(), r.ID)
 	return err
 }
 
@@ -33,7 +33,7 @@ func (r *Artist) CreateArtist(db *sql.DB) error {
 
 func GetArtists(db *sql.DB, start int, count int) ([]Artist, error) {
 	rows, err := db.Query(
-		"SELECT id, artist_name, monthly_listeners, last_checked FROM listeners LIMIT $1 OFFSET $2",
+		"SELECT id, artist_name, monthly_listeners, last_checked FROM artist LIMIT $1 OFFSET $2",
 		count, start)
 
 	if err != nil {
