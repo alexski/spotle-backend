@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"net/http"
 
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
@@ -33,6 +34,9 @@ func (a *App) Initialize(user string, password string, dbname string, host strin
 }
 
 func (a *App) initializeRoutes() {
+	a.Router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprint(w, "API Connected")
+	}).Methods("GET")
 	a.Router.HandleFunc("/artists", a.GetArtists).Methods("GET")
 	a.Router.HandleFunc("/artist", a.CreateArtist).Methods("POST")
 	a.Router.HandleFunc("/artist/{id:[0-9]+}", a.GetArtist).Methods("GET")

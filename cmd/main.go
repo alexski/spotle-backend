@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"time"
 
 	"spotle-backend/handler"
 
@@ -29,19 +30,22 @@ func main() {
 		os.Getenv("POSTGRES_HOST"),
 		os.Getenv("POSTGRES_PORT"))
 
-	router := http.NewServeMux()
-	router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprint(w, "API Connected")
-	})
-
-	port := ":8080"
+	port := "8080"
 	_, err = strconv.Atoi(os.Getenv("PORT"))
 	if err != nil {
 		fmt.Println("Defaulting port...")
 	} else {
-		port = ":" + os.Getenv("PORT")
+		port = os.Getenv("PORT")
 	}
+
+	srv := &http.Server{
+		Handler:      a.Router,
+		Addr:         "127.0.0.1:" + port,
+		WriteTimeout: 15 * time.Second,
+		ReadTimeout:  15 * time.Second,
+	}
+
 	fmt.Println("API Version: " + Version)
 	fmt.Println("Running server on port: " + port)
-	log.Fatal(http.ListenAndServe(port, router))
+	log.Fatal(srv.ListenAndServe())
 }
